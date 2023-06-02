@@ -6,6 +6,8 @@ Antes de começar tem alguns pontos que podem te ajudar, se atente aos TODOs exi
 
 **EXTRA**: Será considerado um extra, se na página de post, for criado um formulário que realiza a criação de um novo comentário, salvando ele em banco de dados.
 
+**DESAFIO EXTRA RESOLVIDO**: Inclui o formulário de comentário dentro da pagina de detalhes do POST. 
+
 Boa sorte!
 
 ### Tecnologias presente neste projeto
