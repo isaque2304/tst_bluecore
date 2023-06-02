@@ -1,0 +1,112 @@
+<section id="app">
+    <a href="/">
+        <- Voltar</a><br>
+            <h1>{{post.Title}}</h1>
+            <p>{{post.Content}}</p>
+            <br>
+            <div class="row">
+                <div class="col-md-12 d-flex justify-content-start m-4">
+                    <div>
+                        <h3>Comentários</h3>
+                    </div>
+                </div>
+            </div>
+
+            <form @submit="submitForm" method="post">
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label>Nome*</label>
+                            <input v-model="UserName" required class="form-control" placeholder="Seu nome..." />
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Comentário*</label>
+                            <textarea v-model="Comment" required id="" class="form-control" cols="92" rows="3"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-6 d-flex justify-content-end">
+                        <button type="submit" class="btn btn-primary btn-sm">Comentar</button>
+                    </div>
+                </div>
+            </form>
+
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="scrollable-section">
+                        <ul>
+                            <!-- Utilize looping v-for do VueJs para exibir os comentários (título e conteúdo) de forma dinâmica -->
+                            <li v-for="comment in comments" :key="comment.id">
+                                <h5>{{comment.UserName}}</h5>
+                                <p>{{comment.Comment}}</p>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+</section>
+
+<script>
+    var http = axios.create({
+        baseURL: "<%- apiUrl%>",
+        timeout: 10000,
+    });
+
+    const postId = "<%- postId %>"
+
+    var app = new Vue({
+        el: "#app",
+        data: {
+            post: {},
+            comments: [],
+            UserName: '',
+            Comment: '',
+            PostId: ''
+        },
+
+        methods: {
+            loadPost() {
+                http.get("/posts/" + postId).then((response) => {
+                    this.post = response.data;
+                });
+            },
+            loadComments() {
+                //TODO: Criar função que realiza a chamada na API retornando os comentários pelo id do post
+                //para usar o id do post utilize a constate postId criada a cima
+                http.get(`comments/${postId}`).then((response) => {
+                    this.comments = response.data;
+
+                    console.log(response.data)
+                });
+            },
+            submitForm(event) {
+                event.preventDefault();
+
+                const dataForm = {
+                    UserName: this.UserName,
+                    Comment: this.Comment,
+                    PostId: postId
+                }
+
+                http.post(`comments/create`, dataForm).then((response) => {
+                    console.log(response.data); // Exibe a resposta da API no console
+                    this.loadComments();
+                }).catch(error => {
+                    console.error('Erro ao enviar os dados:', error);
+                });
+            }
+        },
+        mounted() {
+            this.loadPost();
+            //TODO: Faça a chamada da função que carrega os comentários
+            this.loadComments();
+        },
+    });
+</script>
